@@ -34,6 +34,7 @@ def heart_rate():
 
 @app.route("/api/heart_rate/<user_email>", methods=["GET"])
 def get_all_hr(user_email):
+    """returns all heart rate measurements for the user"""
     all_hr = request.get(user_email)
     return all_hr
 
