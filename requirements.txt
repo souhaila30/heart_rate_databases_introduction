@@ -1,2 +1,6 @@
 pymodm
 flask
+numpy
+pytest-pep8
+pytest
+python-dateutil
