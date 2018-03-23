@@ -4,7 +4,9 @@ import datetime
 import numpy as np
 import dateutil.parser
 
+
 def add_heart_rate(email, heart_rate, time):
+
     """function takes in user email, heart rate and time, and adds the responses to the database
     for an existing user
 
@@ -32,15 +34,18 @@ def create_user(email, age, heart_rate):
     u.save() # save the user to the database
 
 def print_user(email):
-    """ finds an existing user in the database using their email, and print the responses recorded
-
-    :param email: email of the user
     """
+    Appends a heart_rate measurement at a specified time to the user specified by
+    email. It is assumed that the user specified by email exists already.
+    :param email: str email of the user
+    :param heart_rate: number heart_rate measurement of the user
+    :param time: the datetime of the heart_rate measurement
+    """
+    user = models.User.objects.raw({"_id": email}).first()  # Get the first user where _id=email
+    user.heart_rate.append(heart_rate)  # Append the heart_rate to the user's list of heart rates
+    user.heart_rate_times.append(time)  # append the current time to the user's list of heart rate times
+    user.save()  # save the user to the database
 
-    user = models.User.objects.raw({"_id": email}).first() # Get the first user where _id=email
-    print(user.email)
-    print(user.heart_rate)
-    print(user.heart_rate_times)
 
 def get_hr_user(email):
     """Uses email of user to find all heart rate measurements recorded
@@ -111,4 +116,5 @@ def check_tachycardia(age, avg_hr):
         return "Tachycardia: True"
     else:
         return "Tachycardia: False"
+
 
