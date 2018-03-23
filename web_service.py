@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
-from main import create_user, add_heart_rate, print_user
+from main import create_user, add_heart_rate, print_user, get_hr_user
+from main import calculate_hr
 import models
-import numpy as np
 import datetime
 from pymodm import connect
 
@@ -43,30 +43,39 @@ def get_print_user(user_email):
     except:
         return "User not found"
 
-@app.route("/api/heart_rate/<user_email>", methods=["GET"])
-def get_all_hr(user_email):
+@app.route("/api/heart_rate/<email>", methods=["GET"])
+def get_all_hr(email):
     """returns all heart rate measurements for the user"""
     try:
-        user = models.User.objects.raw({"_id":user_email}).first()
+        get_hr_user(email)
         return jsonify("heart rate responses:", user.heart_rate)
     except:
         return "User not found"
 
-@app.route("/api/heart_rate/average/<user_email>", methods=["GET"])
-def get_avg_hr(user_email):
-    user = models.User.objects.raw({"_id":user_email}).first()
-    print(user.heart_rate)
-    avg_hr = np.mean(user.heart_rate)
-    print(avg_hr)
-    return jsonify("average heart rate is",  avg_hr)
+@app.route("/api/heart_rate/average/<email>", methods=["GET"])
+def get_avg_hr(email):
+    """returns the average heart rate of all measurements of a user
+    """
+    try:
+        avg_hr = calculate_hr(email)
+        print(avg_hr)
+        return jsonify("average heart rate is",  avg_hr)
+    except:
+        return "Try again, user email not found"
 
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
-def get_avg_hr_interval(user_email, interval):
-    user = models.User.objects.raw({"_id":user_email}).first()
+def get_avg_hr_interval():
     r = request.get_json()
-    interval = 
-    max_time = datetime.max(user.user_time)
-    print(max_time)
+    interval = r["time"]
+    print(interval)
+    email = r["user_email"]
+    print(email)
+    df = user.heart_rate
+    index = df.truncate(before=interval)
+    print(index)
+    return index
+   # except:
+      #  return "time is outside of range, values not found"
 
 if __name__ =="__main__":
     app.run(host="127.0.0.1")
