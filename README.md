@@ -2,6 +2,8 @@ Contributor: Souhaila Noor
 
 Course: BME 590 Medical Software Design
 
+Description: Uses docker and mongo db to create a database to store and manipulate heart rates measurements. 
+
 # heart_rate_databases_starter
 Starter codebase for BME590 Databases Assignment (which can be found [here](https://github.com/mlp6/Medical-Software-Design/blob/master/Lectures/databases/main.md#mini-projectassignment)). 
 
@@ -23,8 +25,9 @@ once your database is running and your connection string is set, you can run the
 ```
 python main.py
 ```
-#How to use
+
+# How to use
 1. Install docker and mongo db 
 2. Install requirements
 3. Run web_server.py
-Use postman to submit get and post requests
+4. Use postman to submit get and post requests
