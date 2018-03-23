@@ -1,3 +1,9 @@
+Contributor: Souhaila Noor
+
+Course: BME 590 Medical Software Design
+
+Description: Uses docker and mongo db to create a database to store and manipulate heart rates measurements. 
+
 # heart_rate_databases_starter
 Starter codebase for BME590 Databases Assignment (which can be found [here](https://github.com/mlp6/Medical-Software-Design/blob/master/Lectures/databases/main.md#mini-projectassignment)). 
 
@@ -20,10 +26,9 @@ once your database is running and your connection string is set, you can run the
 python main.py
 ```
 
-## The Assignment + Hints
+# How to use
+1. Install docker and mongo db 
+2. Install requirements
+3. Run web_server.py
+4. Use postman to submit get and post requests
 
-This starter code _is not_ a flask server like you need to build in your assignment--`main.py` is an example module that contains several useful functions for creating a `User` (`create_user`) and updating a `User` with a new heart rate and heart rate timestamp (`add_heart_rate`). 
-
-`models.User` is a data model that represents the entity we want to store and retreive from the database. You can see that `User` is just a python class with some properties. 
-
-:eyes: When writing the `POST /api/heart_rate` endpoint, you need to first check if the user with the given email already exists in the database. If so, then you can use `add_heart_rate` to append a heart rate measurement to that user. If not, then you would want to `create_user`. I did not explicitly show you how to check if a user already exists in the database, but this is something you should be able to figure out based on the sample code + google + office hours! 
