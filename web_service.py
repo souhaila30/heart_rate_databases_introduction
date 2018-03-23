@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from main import create_user, add_heart_rate, print_user, get_hr_user
-from main import calculate_hr
+from main import calculate_hr, find_time, check_tachycardia
 import models
 import datetime
 from pymodm import connect
@@ -23,45 +23,32 @@ def heart_rate():
     age = r["user_age"]
     heart_rate = r["heart_rate"]
     time = datetime.datetime.now()
-    print(email,age, heart_rate)
+    print(email,age, heart_rate, time)
     try:
         add_heart_rate(email, heart_rate, time)
         print("User found, responses recorded")
-        return jsonify(email, heart_rate, time)
+        return jsonify(email, heart_rate, time), 200
     except:
         print("user not found, a new user was created")
         create_user(email, age, heart_rate)
-        return jsonify(email, age, heart_rate, time)
-
-@app.route("/api/print_user/<user_email>", methods=["GET"])
-def get_print_user(user_email):
-    """print all the information associated with the user email
-    """
-    try:
-        print_user(user_email)
-        return "User responses were printed"
-    except:
-        return "User not found"
+        return jsonify(email, age, heart_rate), 200
 
 @app.route("/api/heart_rate/<email>", methods=["GET"])
 def get_all_hr(email):
     """returns all heart rate measurements for the user"""
     try:
-        get_hr_user(email)
-        return jsonify("heart rate responses:", user.heart_rate)
+        return jsonify(get_hr_user(email))
     except:
-        return "User not found"
+        return "User not found", 400
 
 @app.route("/api/heart_rate/average/<email>", methods=["GET"])
 def get_avg_hr(email):
     """returns the average heart rate of all measurements of a user
     """
     try:
-        avg_hr = calculate_hr(email)
-        print(avg_hr)
-        return jsonify("average heart rate is",  avg_hr)
+        return jsonify(calculate_hr(email)), 200
     except:
-        return "Try again, user email not found"
+        return "Try again, user email not found", 400
 
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
 def get_avg_hr_interval():
@@ -70,12 +57,12 @@ def get_avg_hr_interval():
     print(interval)
     email = r["user_email"]
     print(email)
-    df = user.heart_rate
-    index = df.truncate(before=interval)
-    print(index)
-    return index
-   # except:
-      #  return "time is outside of range, values not found"
+    print(find_time(email, interval))
+    return "it is working well so far", 200
+
+@app.route("/api/heart_rate/is_tachycardia/<email>", methods=["GET"])
+def is_tachycardia(email):
+    return jsonify(check_tachycardia(email))
 
 if __name__ =="__main__":
     app.run(host="127.0.0.1")
