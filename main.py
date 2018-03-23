@@ -2,6 +2,7 @@ from pymodm import connect
 import models
 import datetime
 import numpy as np
+import dateutil.parser
 
 def add_heart_rate(email, heart_rate, time):
     """function takes in user email, heart rate and time, and adds the responses to the database
@@ -46,8 +47,7 @@ def get_hr_user(email):
 
     :param email: email of user
     """
-    user = models.User.objects.raw({"_id":user_email}).first()
-    print user.heart_rate
+    user = models.User.objects.raw({"_id":email}).first()
     return user.heart_rate
 
 def calculate_hr(email):
@@ -55,8 +55,48 @@ def calculate_hr(email):
 
     :param email: email of user
     """
-    user.heart_rate = get_hr_user(email)
-    print(user.heart_rate)
-    avg_hr = np.mean(user.heart_rate)
-    print(avg_hr)
+    avg_hr = np.mean(get_hr_user(email))
     return avg_hr
+
+def find_time(email, interval):
+    """finds the heart rates within a time interval specified by the user
+
+    :param email: email of user
+    :param interval: start of time interval
+    """
+
+    user = models.User.objects.raw({"_id":email}).first()
+    formatted_interval = dateutil.parser.parse(interval)
+    print(type(formatted_interval))
+    hr = user.heart_rate
+    time = user.heart_rate_times
+    print(hr)
+    print(time)
+
+def check_tachycardia(email):
+    """checks the average heart rate and returns if the user has tachycardia
+    :param email: email of user
+    :param age: age of user
+    :param avg_hr: average heart rate of the user
+    """
+    user = models.User.objects.raw({"_id":email}).first()
+    age = np.max(user.age)
+    print(age)
+    avg_hr = calculate_hr(email)
+    print(avg_hr)
+
+    if age>=1 and age<=2 and avg_hr>=151:
+        return "Tachycardia: True"
+    elif age>=3 and age<=4 and avg_hr>137:
+        return "Tachycardia: True"
+    elif age>=5 and age<=7 and avg_hr>133:
+        return "Tachycardia: true"
+    elif age>=8 and age<=11 and avg_hr>142:
+        return "Tachycardia: True"
+    elif age>=12 and age<=15 and avg_hr>119:
+        return "Tachycardia: true"
+    elif age>15 and avg_hr>100:
+        return "Tachycardia: true"
+    else:
+        return "Tachycardia: false"
+
