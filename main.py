@@ -72,6 +72,10 @@ def find_time(email, interval):
     time = user.heart_rate_times
     print(hr)
     print(time)
+    time_diff = np.abs([i - interval for i in time])
+    print(time_diff.argmin(0))
+#    print(new_hr)
+    return "No errors yet"
 
 def check_tachycardia(email):
     """checks the average heart rate and returns if the user has tachycardia
