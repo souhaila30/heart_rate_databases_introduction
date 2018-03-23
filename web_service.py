@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from main import create_user, add_heart_rate, print_user, get_hr_user
-from main import calculate_hr, find_time, check_tachycardia
+from main import calculate_hr, find_time, check_tachycardia, return_age
 import models
 import datetime
 from pymodm import connect
@@ -46,7 +46,8 @@ def get_avg_hr(email):
     """returns the average heart rate of all measurements of a user
     """
     try:
-        return jsonify(calculate_hr(email)), 200
+        all_hr = get_hr_user(email)
+        return jsonify(calculate_hr(all_hr)), 200
     except:
         return "Try again, user email not found", 400
 
@@ -62,7 +63,13 @@ def get_avg_hr_interval():
 
 @app.route("/api/heart_rate/is_tachycardia/<email>", methods=["GET"])
 def is_tachycardia(email):
-    return jsonify(check_tachycardia(email))
+    try:
+        all_hr = get_hr_user(email)
+        avg_hr = calculate_hr(all_hr)
+        age = return_age(email)
+        return jsonify(check_tachycardia(age, avg_hr)), 200
+    except:
+        return "Something went wrong, try again", 400
 
 if __name__ =="__main__":
     app.run(host="127.0.0.1")
