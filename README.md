@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/souhaila30/heart_rate_databases_introduction.svg?branch=master)](https://travis-ci.org/souhaila30/heart_rate_databases_introduction)
+
 Contributor: Souhaila Noor
 
 Course: BME 590 Medical Software Design
