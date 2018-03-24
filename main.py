@@ -64,7 +64,7 @@ def calculate_hr(all_hr):
     avg_hr = np.mean(all_hr)
     return avg_hr
 
-def find_time(email, interval):
+def find_hr_interval(email, interval):
     """finds the heart rates within a time interval specified by the user
 
     :param email: email of user
@@ -73,15 +73,21 @@ def find_time(email, interval):
 
     user = models.User.objects.raw({"_id":email}).first()
     formatted_interval = dateutil.parser.parse(interval)
-    print(type(formatted_interval))
-    hr = user.heart_rate
-    time = user.heart_rate_times
-    print(hr)
-    print(time)
-    time_diff = np.abs([i - interval for i in time])
-    print(time_diff.argmin(0))
-#    print(new_hr)
-    return "No errors yet"
+    heart_rate_total = 0
+    heart_rate_count = 0
+
+    for index,heart_rate in enumerate(user.heart_rate):
+        heart_rate_time = user.heart_rate_times[index]
+        print("index" + str(index))
+        print("heart_rate" + str(heart_rate))
+        print("heart_rate_time" + str(heart_rate_time))
+        if heart_rate_time >= formatted_interval:
+            heart_rate_total += heart_rate
+            heart_rate_count += 1
+            print("heart rate total" + str(heart_rate_total))
+    heart_rate_avg = heart_rate_total / heart_rate_count
+    print('heart rate average:', str(heart_rate_avg))
+    return "we are still here"
 
 def return_age(email):
     """returns the age of the user
@@ -96,11 +102,6 @@ def check_tachycardia(age, avg_hr):
     :param age: age of user
     :param avg_hr: average heart rate of the user
     """
-    #user = models.User.objects.raw({"_id":email}).first()
-    #age = np.max(user.age)
-    #print(age)
-    #avg_hr = calculate_hr(email)
-    #print(avg_hr)
 
     if age>=1 and age<=2 and avg_hr>=151:
         return "Tachycardia: True"
@@ -117,4 +118,10 @@ def check_tachycardia(age, avg_hr):
     else:
         return "Tachycardia: False"
 
+def get_user(email):
+    user = models.User.objects.raw({"_id":email}).first()
+    age = user.age
+    time = user.heart_rate_times
+    hr = user.heart_rate
+    return email, age, time, hr
 
