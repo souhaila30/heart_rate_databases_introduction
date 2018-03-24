@@ -54,10 +54,13 @@ def get_avg_hr(email):
 
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
 def get_avg_hr_interval():
-    r = request.get_json()
-    interval = r["time"]
-    email = r["user_email"]
-    return jsonify(find_hr_interval(email, interval)), 200
+    try:
+        r = request.get_json()
+        interval = r["time"]
+        email = r["user_email"]
+        return jsonify(find_hr_interval(email, interval)), 200
+    except:
+        return "Error: try a different interval or email", 400
 
 @app.route("/api/heart_rate/is_tachycardia/<email>", methods=["GET"])
 def is_tachycardia(email):
@@ -71,7 +74,10 @@ def is_tachycardia(email):
 
 @app.route("/api/all_data/<email>", methods=["GET"])
 def get_info(email):
-    return jsonify(get_user(email))
+    try:
+        return jsonify(get_user(email)), 200
+    except:
+        return "Error, try a different email", 400
 
 if __name__ =="__main__":
     app.run(host="127.0.0.1")
