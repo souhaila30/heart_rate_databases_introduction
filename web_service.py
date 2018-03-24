@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from main import create_user, add_heart_rate, print_user, get_hr_user
-from main import calculate_hr, find_time, check_tachycardia, return_age
+from main import calculate_hr, find_hr_interval, check_tachycardia, return_age
+from main import get_user
 import models
 import datetime
 from pymodm import connect
@@ -55,11 +56,8 @@ def get_avg_hr(email):
 def get_avg_hr_interval():
     r = request.get_json()
     interval = r["time"]
-    print(interval)
     email = r["user_email"]
-    print(email)
-    print(find_time(email, interval))
-    return "it is working well so far", 200
+    return jsonify(find_hr_interval(email, interval)), 200
 
 @app.route("/api/heart_rate/is_tachycardia/<email>", methods=["GET"])
 def is_tachycardia(email):
@@ -70,6 +68,10 @@ def is_tachycardia(email):
         return jsonify(check_tachycardia(age, avg_hr)), 200
     except:
         return "Something went wrong, try again", 400
+
+@app.route("/api/all_data/<email>", methods=["GET"])
+def get_info(email):
+    return jsonify(get_user(email))
 
 if __name__ =="__main__":
     app.run(host="127.0.0.1")
