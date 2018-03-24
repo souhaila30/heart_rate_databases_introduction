@@ -52,17 +52,23 @@ def get_hr_user(email):
 
     :param email: email of user
     """
-    user = models.User.objects.raw({"_id":email}).first()
-    all_hr = user.heart_rate
-    return all_hr
+    try:
+        user = models.User.objects.raw({"_id":email}).first()
+        all_hr = user.heart_rate
+        return all_hr
+    except:
+        return "User not found"
 
 def calculate_hr(all_hr):
     """calculate the average heart rate for a user
 
     :param email: email of user
     """
-    avg_hr = np.mean(all_hr)
-    return avg_hr
+    try:
+        avg_hr = np.mean(all_hr)
+        return avg_hr
+    except:
+        return "Heart rate measurements not found"
 
 def find_hr_interval(email, interval):
     """finds the heart rates within a time interval specified by the user
@@ -70,31 +76,36 @@ def find_hr_interval(email, interval):
     :param email: email of user
     :param interval: start of time interval
     """
+    try:
+        user = models.User.objects.raw({"_id":email}).first()
+        formatted_interval = dateutil.parser.parse(interval)
+        heart_rate_total = 0
+        heart_rate_count = 0
 
-    user = models.User.objects.raw({"_id":email}).first()
-    formatted_interval = dateutil.parser.parse(interval)
-    heart_rate_total = 0
-    heart_rate_count = 0
-
-    for index,heart_rate in enumerate(user.heart_rate):
-        heart_rate_time = user.heart_rate_times[index]
-        print("index" + str(index))
-        print("heart_rate" + str(heart_rate))
-        print("heart_rate_time" + str(heart_rate_time))
-        if heart_rate_time >= formatted_interval:
-            heart_rate_total += heart_rate
-            heart_rate_count += 1
-            print("heart rate total" + str(heart_rate_total))
-    heart_rate_avg = heart_rate_total / heart_rate_count
-    print('heart rate average:', str(heart_rate_avg))
-    return "we are still here"
+        for index,heart_rate in enumerate(user.heart_rate):
+            heart_rate_time = user.heart_rate_times[index]
+            print("index" + str(index))
+            print("heart_rate" + str(heart_rate))
+            print("heart_rate_time" + str(heart_rate_time))
+            if heart_rate_time >= formatted_interval:
+                heart_rate_total += heart_rate
+                heart_rate_count += 1
+                print("heart rate total" + str(heart_rate_total))
+         heart_rate_avg = heart_rate_total / heart_rate_count
+         print('heart rate average:', str(heart_rate_avg))
+         return heart_rate_avg
+    except:
+        return "Something went wrong, try a different time interval"
 
 def return_age(email):
     """returns the age of the user
     """
-    user = models.User.objects.raw({"_id":email}).first()
-    age = np.max(user.age)
-    return age
+    try:
+        user = models.User.objects.raw({"_id":email}).first()
+        age = np.max(user.age)
+        return age
+    except:
+        return "User not found"
 
 def check_tachycardia(age, avg_hr):
     """checks the average heart rate and returns if the user has tachycardia
@@ -119,9 +130,19 @@ def check_tachycardia(age, avg_hr):
         return "Tachycardia: False"
 
 def get_user(email):
-    user = models.User.objects.raw({"_id":email}).first()
-    age = user.age
-    time = user.heart_rate_times
-    hr = user.heart_rate
-    return email, age, time, hr
+    """Returns all responses for all attribtues for the specified user
+    :param email: email of user
+    :return age: age of user
+    :return heart_rate: all heart rate measurements
+    :return heart_rate_times: time when the heart rates were recorded
+
+    """
+    try:
+        user = models.User.objects.raw({"_id":email}).first()
+        age = user.age
+        time = user.heart_rate_times
+        hr = user.heart_rate
+        return email, age, time, hr
+    except:
+        return "User not found"
 
