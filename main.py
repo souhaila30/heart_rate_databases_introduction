@@ -91,6 +91,7 @@ def find_hr_interval(email, interval):
                 heart_rate_total += heart_rate
                 heart_rate_count += 1
                 print("heart rate total" + str(heart_rate_total))
+
          heart_rate_avg = heart_rate_total / heart_rate_count
          print('heart rate average:', str(heart_rate_avg))
          return heart_rate_avg
